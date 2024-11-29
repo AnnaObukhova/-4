@@ -1,0 +1,355 @@
+namespace Лабораторная_работа__4
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Лабораторная работа №4");
+
+            Random rnd = new Random(); //Датчик случайных чисел
+
+            int maxLenght = 100; //максимально возможная длина массива
+            int minLenght = 1; //минимально возможная длина массива
+            int lenght = 0; //длина массива
+
+            int answer; //ответ в меню
+
+            bool isAnswerCorrect; //флаг для проверки правильности ввода ответа меню
+            bool isArrayNull = true; //флаг для проверки пустого массива
+            bool isLenghtCorrect = false; //флаг для проверки правильности ввода длины массива
+            bool isReadAnswer; //флаг для проверки правильности ввода способа заполнения массива
+            int fillingMetod; //способ заполнения массива
+
+            int[] tempArray = new int[lenght]; //временный массив для удаления и добавления элементов
+            int[] arr = new int[lenght]; //основной массив
+            int tempArrayLenCounter = 0;//счетчик длины временного массива
+           
+            
+            do
+            {
+                //меню
+                Console.WriteLine();
+                Console.WriteLine("Выберете пункт меню:");
+                Console.WriteLine("1. Создать массив");
+                Console.WriteLine("2. Напечатать массив");
+                Console.WriteLine("3. Удалить элементы из массива");
+                Console.WriteLine("4. Добавить элементы в массив");
+                Console.WriteLine("5. Перестановка элементов в массиве");
+                Console.WriteLine("6. Поиск первого отрицательного элемента");
+                Console.WriteLine("7. Сортировка методом простого включения");
+                Console.WriteLine("8. Поиск заданного элемента в отсортированном массиве");
+                Console.WriteLine("9. Выход");
+
+                Console.WriteLine();
+
+                //проверка ввода пункта меню
+                do
+                {
+                    isAnswerCorrect = int.TryParse(Console.ReadLine(), out answer);
+                    if (answer < 1) isAnswerCorrect = false;
+                    if (answer > 9) isAnswerCorrect = false;
+                    if (!isAnswerCorrect)
+                        Console.WriteLine("Ошибка при вводе пункта меню. Попробуйте ещё раз");
+                } while (!isAnswerCorrect);
+
+                switch (answer)
+                {
+                    //заполнение массива
+                    case 1:
+                        Console.WriteLine();
+                        Console.WriteLine("Введите количество элементов массива:");
+                        //ввод длины массива
+                        do
+                        {
+                            isLenghtCorrect = int.TryParse(Console.ReadLine(), out lenght);
+                            if (lenght < minLenght) isLenghtCorrect = false;
+                            if (lenght > maxLenght) isLenghtCorrect = false;
+                            if (!isLenghtCorrect)
+                                Console.WriteLine("Ошибка при вводе длины массива. Попробуйте ещё раз");
+                        } while (!isLenghtCorrect);
+
+                        arr = new int[lenght];
+
+                        //меню ввода элементов массива
+                        Console.WriteLine();
+                        Console.WriteLine("Выберете способ заполнения массива:");
+                        Console.WriteLine("1. Заполнить массив с помощью Датчика Случайных Чисел");
+                        Console.WriteLine("2. Заполнить массив с клавиатуры");
+                        Console.WriteLine();
+                        
+                        //проверка ввода пункта меню
+                        do
+                        {
+                            try
+                            {
+                                fillingMetod = int.Parse(Console.ReadLine());
+                                isReadAnswer = true;
+                            }
+                            catch (FormatException)
+                            {
+                                fillingMetod = 0;
+                                Console.WriteLine("Неправильно введен пункт меню. Попробуйте ещё раз");
+                                isReadAnswer = false;
+                            }
+                            if (fillingMetod < 1)
+                            {
+                                isReadAnswer = false;
+                                Console.WriteLine("Неправильно введен пункт меню. Попробуйте ещё раз");
+                            }
+                            if (fillingMetod > 2)
+                            {
+                                isReadAnswer = false;
+                                Console.WriteLine("Неправильно введен пункт меню. Попробуйте ещё раз");
+                            }
+                            } while (!isReadAnswer);
+
+                        switch (fillingMetod)
+                        {
+                            //ввод с помощью ДСЧ
+                            case 1:
+                                for (int i = 0; i < lenght; i++)
+                                    arr[i] = rnd.Next(-100, 100);
+                                break;
+                            
+                            //ввод с клавиатуры
+                            case 2:
+                                int tempArrayCounter = 0;//счетчик элементов во вспомогательном массиве
+                                for (int i = 0; i < lenght; i++)
+                                {
+                                    tempArrayCounter++;
+                                    try
+                                    {
+                                        Console.WriteLine($"Введите {tempArrayCounter}-ый элемент массива: ");
+                                        arr[i] = int.Parse(Console.ReadLine());
+                                    }
+                                    catch (FormatException)
+                                    {
+                                        Console.WriteLine("Ошибка при вводе целого числа. Попробуйте ещё раз");
+                                        tempArrayCounter--;
+                                    }
+                                }
+                                break;
+                                
+                        }
+                        Console.WriteLine("Массив создан");
+                        isArrayNull = false;
+                        break;
+
+                    //печать массива
+                    case 2:
+                        if (!isArrayNull && arr.Length != 0)
+                        {
+                            Console.WriteLine();
+                            Console.WriteLine("Массив:");
+                            foreach (int i in arr)
+                                Console.Write($"{i} ");
+                            Console.WriteLine();
+                        }
+                        else
+                            Console.WriteLine("Массив пуст");
+                        break;
+
+                    //удаление
+                    case 3:
+                        int tempArrayCounterDel = 0;//счетчик элементов во вспомогательном массиве
+                        double average = 0;//среднее арифметическое значений массива
+                        tempArrayLenCounter = 0;
+
+
+                        if (!isArrayNull && arr.Length != 0)
+                        {
+                            for (int i = 0; i < arr.Length; i++)
+                                average += arr[i];
+                            average = average / (arr.Length);
+                            for (int i = 0; i < arr.Length; i++)
+                            {
+                                if (arr[i] <= average)
+                                    tempArrayLenCounter++;
+                            }
+                            tempArray = new int[tempArrayLenCounter];
+                            
+                            for (int i = 0; i < arr.Length; i++)
+                            {                                
+                                if (arr[i] <= average)
+                                {
+                                    tempArray[tempArrayCounterDel] = arr[i];
+                                    tempArrayCounterDel++;
+                                }
+                            }                            
+                            arr = tempArray;
+                            Console.WriteLine("Нужные элементы удалены");                            
+                        }
+                        else
+                            Console.WriteLine("Массив пуст");
+                        break;
+                    
+                    //добавление элементов
+                    case 4:
+                        if (!isArrayNull && arr.Length != 0)
+                        {
+                            int K = 0; //количество элементов, добаляемых в массив
+                            do
+                            {
+                                try
+                                {
+                                    Console.WriteLine($"Введите K - количество элементов, добавляемых в массив: ");
+                                    K = int.Parse(Console.ReadLine());
+                                }
+                                catch (FormatException)
+                                {
+                                    Console.WriteLine("Ошибка при вводе целого числа. Попробуйте ещё раз");
+                                }
+                                if (K <= 0)
+                                    Console.WriteLine("Количество добавляемых элементов должно быть больше 0");
+                            } while (K <= 0);
+
+                            int[] tempArrayAdd = new int[arr.Length + K]; //временый массив для добавления элементов
+                            for (int i = 0; i < arr.Length + K; i++)
+                            {
+                                if (i < arr.Length)
+                                    tempArrayAdd[i] = arr[i];
+                                else
+                                    try
+                                    {
+                                        Console.WriteLine("Введите добавляемый элемент массива: ");
+                                        tempArrayAdd[i] = int.Parse(Console.ReadLine());
+                                    }
+                                    catch (FormatException)
+                                    {
+                                        Console.WriteLine("Ошибка при вводе целого числа. Попробуйте ещё раз");
+                                    }                                
+                            }
+
+                            arr = tempArrayAdd;
+                            Console.WriteLine("Элементы добавлены в массив");
+                                                                                
+                        }
+                        else
+                            Console.WriteLine("Массив пуст");
+                        break;
+
+                    //перестановка элементов массива
+                    case 5:
+                        int j; //переменная для временного хранения значения
+                        if (!isArrayNull && arr.Length != 0)
+                        {
+                            for (int i = 0; i < arr.Length - 1; i = i + 2)
+                            {
+                                j = arr[i];
+                                arr[i] = arr[i + 1];
+                                arr[i + 1] = j;
+                            }
+                            Console.WriteLine("Элементы переставлены");
+                            isArraySorted = false;
+                        }
+                        else
+                            Console.WriteLine("Массив пуст");
+                        break;
+                    
+                    //поиск отрицательного элемента массива
+                    case 6:
+                        int negativ = 0; //переменная для отрицательного значения
+                        int counter = 0; //счетчик сревнений
+
+                        if (!isArrayNull && arr.Length != 0)
+                        {
+                            for (int i = 0; i < arr.Length; i++)                 
+                            {
+                                counter++;
+                                if (arr[i] < 0)
+                                {
+                                    negativ = arr[i];
+                                    break;
+                                }
+                            }
+                            if (negativ == 0)
+                                Console.WriteLine("В массиве не отрицательных элементов");
+                            else                           
+                                Console.WriteLine($"Первый отрицательный элемент: {negativ}, количество сравнений: {counter}");
+                        }
+                        else
+                            Console.WriteLine("Массив пуст");
+                        break;
+
+                    //сортировка методом простого включения
+                    case 7:                        
+                        if (!isArrayNull && arr.Length != 0)
+                        {
+                            for (int i = 1; i < arr.Length; i++)
+                            {
+                                int item = arr[i];
+                                int k = i - 1;
+                                while (k >= 0 && item < arr[k])
+                                {
+                                    arr[k + 1] = arr[k];
+                                    k--;
+                                }
+                                arr[k + 1] = item;
+                            }
+                            Console.WriteLine("Массив отсортирован");
+                        }
+                        else
+                            Console.WriteLine("Массив пуст");
+                        break;
+
+                    //бинарный поиск
+                    case 8:
+                        int findItem = 0; //переменная для поиска числа, заданного с клавиатуры, в отсортированном массиве
+                        if (!isArrayNull && arr.Length != 0)
+                        {
+                            for (int i = 1; i < arr.Length; i++)
+                            {
+                                int item = arr[i];
+                                int k = i - 1;
+                                while (k >= 0 && item < arr[k])
+                                {
+                                    arr[k + 1] = arr[k];
+                                    k--;
+                                }
+                                arr[k + 1] = item;
+                            }
+                   
+                            Console.WriteLine("Массив был отсортирован");
+                            int left = 0; //индекс левого элемента
+                            int right = arr.Length - 1; //индекс правого элемента
+                            int middle = 0; //индекс среднего элемента
+                            int comparisonCounter = 0; //счетчик сравнений
+                            try
+                            {
+                                Console.WriteLine("Введите элемент, который нужно найти в массиве: ");
+                                findItem = int.Parse(Console.ReadLine());
+                            }
+                                catch (FormatException)
+                            {
+                                Console.WriteLine("Ошибка при вводе целого числа. Попробуйте ещё раз");
+                            }
+                            do
+                            {
+                                middle = (left + right) / 2;
+                                if (arr[middle] < findItem)
+                                {
+                                left = middle + 1;
+                                }
+                                else
+                                {
+                                    right = middle;
+                                }
+                                comparisonCounter++;
+                            } while (left != right);
+
+                            if (arr[left] == findItem)
+                            {
+                                Console.WriteLine($"Номер элемента '{findItem}': {left + 1}. Количество сравнений: {comparisonCounter}");
+                            }
+                            else
+                            Console.WriteLine($"Элемент '{findItem}' не найден в массиве");
+                            
+                        }
+                        else
+                            Console.WriteLine("Массив пуст");
+                        break;
+                }
+            } while (answer < 9);
+        }
+    }
+}
